@@ -32,9 +32,14 @@ public class FriendsManager {
     @Getter
     private final Object2ObjectOpenHashMap<String, List<String>> unreadMessages = new Object2ObjectOpenHashMap<>();
 
-    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    public FriendsManager() {
+    private final Function<DateTimeFormatter, String> timeFormatter;
+    private final Function<String, String> nameFormatter;
+
+    public FriendsManager(Function<DateTimeFormatter, String> formatTime, Function<String, String> formatName) {
+        this.timeFormatter = formatTime;
+        this.nameFormatter = formatName;
     }
 
     public void onWebsocketDisconnect(Object event) {
@@ -48,15 +53,15 @@ public class FriendsManager {
      * @param playerId The ID of the player.
      * @param message  The message.
      */
-    public void addUnreadMessage(String playerId, String message, Function<DateTimeFormatter, String> formatTime, Function<String, String> formatName) {
+    public void addUnreadMessage(String playerId, String message) {
         Friend var3 = this.getFriend(playerId);
         if (var3 != null) {
             if (!this.messages.containsKey(playerId)) {
                 this.messages.put(playerId, new ObjectArrayList<>());
             }
 
-            String time = formatTime.apply(this.timeFormatter);
-            String name = formatName.apply(var3.getName());
+            String time = this.timeFormatter.apply(this.dateTimeFormatter);
+            String name = this.nameFormatter.apply(var3.getName());
             String formattedMessage = time + " " + name + ": " + message;
             this.messages.get(playerId).add(formattedMessage);
         }
@@ -85,7 +90,7 @@ public class FriendsManager {
      * @param playerId The ID of the player.
      * @param text     The message.
      */
-    public void addOutgoingMessage(String playerId, String text, String defaultUsername, Function<DateTimeFormatter, String> formatTime, Function<String, String> formatName) {
+    public void addOutgoingMessage(String playerId, String text, String defaultUsername) {
         Friend friend = this.getFriend(playerId);
         if (friend != null) {
             if (!this.unreadMessages.containsKey(playerId)) {
@@ -93,8 +98,8 @@ public class FriendsManager {
             }
 
             this.unreadMessages.get(playerId).add(friend.getName() + ": " + text);
-            String time = formatTime.apply(this.timeFormatter);
-            String name = formatName.apply(defaultUsername);
+            String time = this.timeFormatter.apply(this.dateTimeFormatter);
+            String name = this.nameFormatter.apply(defaultUsername);
             String formattedMessage = time + " " + name + ": " + text;
             this.addMessage(playerId, formattedMessage);
         }

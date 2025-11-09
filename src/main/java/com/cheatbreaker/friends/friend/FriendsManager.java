@@ -42,7 +42,7 @@ public class FriendsManager {
         this.nameFormatter = formatName;
     }
 
-    public void onWebsocketDisconnect(Object event) {
+    public void clearFriends() {
         this.friends.clear();
         this.friendRequests.clear();
     }

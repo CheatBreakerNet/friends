@@ -26,39 +26,35 @@ import java.util.Objects;
 public class Friend {
     private final String playerId;
     private String name;
-    private int iconColor;
+    private Color iconColor;
     private String status;
     private String server;
     private boolean online;
     private long offlineSince;
     private Status onlineStatus;
 
-    public static int getStatusColor(Status playerStatus) {
+    public static Color getStatusColor(Status playerStatus) {
         if (playerStatus == null) {
-            return -13158601;
+            return new Color(-13158601);
         } else {
-            int color;
+            Color color;
             switch (playerStatus) {
                 case AWAY:
-                    color = new Color(-1722581).getRGB();
+                    color = new Color(-1722581);
                     break;
                 case BUSY:
-                    color = new Color(-1758421).getRGB();
+                    color = new Color(-1758421);
                     break;
                 case OFFLINE:
-                    color = new Color(-13158601).getRGB();
+                    color = new Color(-13158601);
                     break;
                 default:
-                    color = -13369549;
+                    color = new Color(-13369549);
                     break;
             }
 
             return color;
         }
-    }
-
-    public int getIconColors() {
-        return new Color(iconColor).getRGB();
     }
 
     public static FriendBuilder builder() {
